@@ -4,15 +4,10 @@ class Mentor:
         self.surname = surname
         self.courses_attached = []  # Список закрепленных курсов
 
-    def __str__(self):
-        return f'Имя: {self.name}\nФамилия: {self.surname}\n'
-
-
 class Student:
-    def __init__(self, name, surname, gender):
+    def __init__(self, name, surname):
         self.name = name
         self.surname = surname
-        self.gender = gender
         self.finished_courses = []  # Завершенные курсы
         self.courses_in_progress = []  # Курсы в процессе изучения
         self.grades = {}  # Оценки за домашние задания
@@ -60,6 +55,10 @@ class Reviewer(Mentor):
                 student.grades[course] = [grade]
         else:
             return 'Ошибка'
+    def __str__(self):
+        # Строковое представление рецензента
+        return (f'Имя: {self.name}\n'
+                f'Фамилия: {self.surname}')
 
 
 class Lecturer(Mentor):
@@ -82,13 +81,30 @@ class Lecturer(Mentor):
         return (f'Имя: {self.name}\n'
                 f'Фамилия: {self.surname}\n'
                 f'Средняя оценка за лекции: {avg_grade:.2f}')
+class Assessment():
+    def __init__(self, value):
+        self.value = value
 
+    def __eq__(self, other):
+        try:
+            if other is None or not isinstance(other, Assessment):
+                raise TypeError("значение является None или не входит в класс Assessment")
+            return self.value == other.value
+        except TypeError:
+            print("значение является None или не входит в класс Assessment")
 
+    def __lt__(self, other):
+        try:
+            if other is None or not isinstance(other, Assessment):
+                raise TypeError("значение является None или не входит в класс Assessment")
+            return self.value < other.value
+        except TypeError:
+            print("значение является None или не входит в класс Assessment")
 # Пример использования
-student_1= Student('Иосиф', 'Джугашвили', 'your_gender')
+student_1= Student('Иосиф', 'Джугашвили')
 student_1.courses_in_progress += ['Python', 'Git']
 student_1.finished_courses += ['Введение в программирование']
-student_2 = Student('Володя', 'Ульянов', 'your_gender')
+student_2 = Student('Володя', 'Ульянов')
 student_2.courses_in_progress += ['Python', 'Git']
 student_2.finished_courses += ['Введение в программирование']
 
@@ -103,27 +119,58 @@ reviewer_2 = Reviewer('Николай', 'Чернышевский')
 reviewer_2.courses_attached += ['Git']
 
 # Проверяющий выставляет оценку студенту
-reviewer_1.rate_hw(student_1, 'Python', 9)
-reviewer_2.rate_hw(student_1, 'Git', 9)
+reviewer_1.rate_hw(student_1, 'Python', 7)
+reviewer_2.rate_hw(student_1, 'Git', 8)
 
-reviewer_1.rate_hw(student_2, 'Python', 10)
-reviewer_2.rate_hw(student_2, 'Git', 10)
+reviewer_1.rate_hw(student_2, 'Python', 9)
+reviewer_2.rate_hw(student_2, 'Git', 8)
 
 # Студент выставляет оценку лектору
-student_1.rate_lecturer(lecturer_1, 'Python', 10)
-student_2.rate_lecturer(lecturer_1, 'Python', 9)
-student_1.rate_lecturer(lecturer_2, 'Git', 10)
+student_1.rate_lecturer(lecturer_1, 'Python', 5)
+student_2.rate_lecturer(lecturer_1, 'Python', 10)
+student_1.rate_lecturer(lecturer_2, 'Git', 9)
 student_2.rate_lecturer(lecturer_2, 'Git', 9)
 
+
+#first_student = None
+first_student = Assessment(student_1.average_grade())
+second_student = Assessment(student_2.average_grade())
+
 # Вывод информации
-print('Студенты:')
-print(student_1)
-print(student_2)
+print("Рецензенты:")
+print(reviewer_1)
+print()
+print(reviewer_2)
 print('_______________________________________________________________')
 print('Лекторы:')
 print(lecturer_1)
+print()
 print(lecturer_2)
 print('_______________________________________________________________')
-print("Рецинзенты:")
-print(reviewer_1)
-print(reviewer_2)
+print('Студенты:')
+print(student_1)
+print()
+print(student_2)
+print('_______________________________________________________________')
+# лучший студент
+#first_student = None
+first_student = Assessment(student_1.average_grade())
+second_student = Assessment(student_2.average_grade())
+
+if first_student == second_student:
+    print (f'У студентов: {student_1.name} {student_1.surname} и {student_2.name} {student_2.surname} одинаковая средняя оценка')
+elif first_student < second_student:
+    print(f'Лучший студент: {student_2.name} {student_2.surname}')
+else:
+    print(f'Лучший студент: {student_1.name} {student_1.surname}')
+print()
+# лучший лектор
+first_lecturer = Assessment(lecturer_1.average_grade())
+second_lecturer = Assessment(lecturer_2.average_grade())
+if first_lecturer == second_lecturer:
+    print (f'У лекторов: {lecturer_1.name} {lecturer_1.surname} и {lecturer_2.name} {lecturer_2.surname} одинаковая средняя оценка')
+elif first_lecturer < second_lecturer:
+    print(f'Лучший лектор: {lecturer_2.name} {lecturer_2.surname}')
+else:
+    print(f'Лучший лектор: {lecturer_1.name} {lecturer_1.surname}')
+
