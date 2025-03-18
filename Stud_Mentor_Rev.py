@@ -1,3 +1,4 @@
+
 class Mentor:
     def __init__(self, name, surname):
         self.name = name
@@ -81,25 +82,24 @@ class Lecturer(Mentor):
         return (f'Имя: {self.name}\n'
                 f'Фамилия: {self.surname}\n'
                 f'Средняя оценка за лекции: {avg_grade:.2f}')
-class Assessment():
+class Assessment:
+    """Метод оценки на равно или меньше с проверкой вхождения в класс Assessment"""
     def __init__(self, value):
+        if not isinstance(value, float):
+            raise AttributeError('значение не входит в класс Assessment')
         self.value = value
+    @classmethod
+    def __verifi_data(cls, other):
+        if not isinstance(other, Assessment):
+            raise AttributeError('значение не входит в класс Assessment')
+        return other.value
+
 
     def __eq__(self, other):
-        try:
-            if other is None or not isinstance(other, Assessment):
-                raise TypeError("значение является None или не входит в класс Assessment")
-            return self.value == other.value
-        except TypeError:
-            print("значение является None или не входит в класс Assessment")
+        return self.value == other.__verifi_data(other)
 
     def __lt__(self, other):
-        try:
-            if other is None or not isinstance(other, Assessment):
-                raise TypeError("значение является None или не входит в класс Assessment")
-            return self.value < other.value
-        except TypeError:
-            print("значение является None или не входит в класс Assessment")
+        return self.value < other.__verifi_data(other)
 # Пример использования
 student_1= Student('Иосиф', 'Джугашвили')
 student_1.courses_in_progress += ['Python', 'Git']
@@ -119,22 +119,20 @@ reviewer_2 = Reviewer('Николай', 'Чернышевский')
 reviewer_2.courses_attached += ['Git']
 
 # Проверяющий выставляет оценку студенту
-reviewer_1.rate_hw(student_1, 'Python', 7)
+reviewer_1.rate_hw(student_1, 'Python', 10)
 reviewer_2.rate_hw(student_1, 'Git', 8)
 
 reviewer_1.rate_hw(student_2, 'Python', 9)
 reviewer_2.rate_hw(student_2, 'Git', 8)
 
 # Студент выставляет оценку лектору
-student_1.rate_lecturer(lecturer_1, 'Python', 5)
-student_2.rate_lecturer(lecturer_1, 'Python', 10)
-student_1.rate_lecturer(lecturer_2, 'Git', 9)
-student_2.rate_lecturer(lecturer_2, 'Git', 9)
+student_1.rate_lecturer(lecturer_1, 'Python', 10)
+student_2.rate_lecturer(lecturer_1, 'Python', 9)
+student_1.rate_lecturer(lecturer_2, 'Git', 8)
+student_2.rate_lecturer(lecturer_2, 'Git', 8)
 
 
-#first_student = None
-first_student = Assessment(student_1.average_grade())
-second_student = Assessment(student_2.average_grade())
+
 
 # Вывод информации
 print("Рецензенты:")
@@ -153,7 +151,7 @@ print()
 print(student_2)
 print('_______________________________________________________________')
 # лучший студент
-#first_student = None
+
 first_student = Assessment(student_1.average_grade())
 second_student = Assessment(student_2.average_grade())
 
@@ -173,4 +171,3 @@ elif first_lecturer < second_lecturer:
     print(f'Лучший лектор: {lecturer_2.name} {lecturer_2.surname}')
 else:
     print(f'Лучший лектор: {lecturer_1.name} {lecturer_1.surname}')
-
